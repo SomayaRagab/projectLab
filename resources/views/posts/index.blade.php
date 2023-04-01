@@ -42,3 +42,27 @@
 
 
 @endsection
+
+@section('confirm')
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
+<script type="text/javascript">
+    $('form').click(function(event) {
+        var form =  $(this).closest("form");
+        event.preventDefault();
+        swal({
+            title: `Are you sure you want to delete this record?`,
+            text: "If you delete this, it will be gone forever.",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+            .then((willDelete) => {
+                if (willDelete) {
+                    form.submit();
+                }
+            });
+    });
+</script>
+@endsection
