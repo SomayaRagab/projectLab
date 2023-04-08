@@ -2,106 +2,77 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PostRequest;
+use App\Models\Comment;
+use App\Models\Post;
+use App\Models\User;
 use Illuminate\Http\Request;
-use Psy\Readline\Hoa\Console;
 
 class PostController extends Controller
 {
 
-    private $allPosts = [
-        [
-            'id' => 1,
-            'title' => 'Laravel',
-            'description' => 'hello laravel',
-            'posted_by' => 'Ahmed',
-            'created_at' => '2023-04-01 10:00:00',
-        ],
 
-        [
-            'id' => 2,
-            'title' => 'PHP',
-            'description' => 'hello php',
-            'posted_by' => 'Mohamed',
-            'created_at' => '2023-04-01 10:00:00',
-        ],
-
-        [
-            'id' => 3,
-            'title' => 'Javascript',
-            'description' => 'hello javascript',
-            'posted_by' => 'Mohamed',
-            'created_at' => '2023-04-01 10:00:00',
-        ],
-    ];
-    public function test()
-    {
-        $books = ['b1', 'b2'];
-
-//        dd($books);
-
-        return view('test', [
-                'books' => $books,
-                'name' => 'Ahmed'
-            ]
-        );
-    }
 
     public function index()
     {
 
-
-        return view('posts.index',[
-            'posts' => $this->allPosts,
-        ]);
+        $posts = Post::paginate(10);
+        return view('posts.index', compact('posts'));
     }
 
     public function show(int $id)
     {
-        $post = [
-            'id' => 3,
-            'title' => 'Javascript',
-            'description' => 'hello javascript',
-            'posted_by' => 'Mohamed',
-            'created_at' => '2023-04-01 10:00:00',
-        ];
-
-        return view('posts.show', ['post' => $post]);
+        $post = Post::find($id);
+        $comments =Comment::where('commentable_id', $id)->get();
+        if($post){
+            return view('posts.show', compact('post', 'comments'));
+        }
+        return redirect()->route('posts.index');
     }
 
     public function create()
     {
-        return view('posts.create');
+        $users = User::all();
+        return view('posts.create',[
+            'users' => $users
+        ]);
     }
 
-    public function store(Request $request)
+    public function store(PostRequest $request)
     {
+        Post::create($request->all());
         return redirect()->route('posts.index');
     }
 
     public function edit(int $id)
     {
-        $post = [
-            'id' => $id,
-            'title' => 'Javascript',
-            'description' => 'hello javascript',
-            'posted_by' => 'Mohamed',
-            'created_at' => '2023-04-01 10:00:00',
-        ];
 
-        return view('posts.edit', ['post' => $post]);
+        $post = Post::find($id);
+        if($post){
+            $users = User::all();
+            return view('posts.edit', ['post' => $post , 'users'=> $users]);
+        }
+        return redirect()->route('posts.index');
     }
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, int $id)
+    public function update(PostRequest $request, int $id)
     {
-        return redirect()->route('posts.show', ['id' => $id]);
-
+        $post = Post::find($id);
+        if($post){
+            $post->update($request->all());
+            return redirect()->route('posts.show', ['id' => $id]);
+        }
+        return redirect()->route('posts.index');
     }
 
 
     public function destroy(int $id)
     {
+        if(post::destroy($id)){
+            return redirect()->route('posts.index');
+        }
         return redirect()->route('posts.index');
     }
 }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CommentController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
 
@@ -18,7 +19,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/test', [PostController::class, 'test']);
+// Route::get('/test', [PostController::class, 'test']);
 
 //Finish The page UI
 //1- route to show the page that lists the posts
@@ -32,6 +33,7 @@ Route::get('/test', [PostController::class, 'test']);
 
 
 
+Route::resource('comments', CommentController::class,['parameters'=>['comments' =>'id']]);
 Route::resource('posts', PostController::class,['parameters'=>['posts' =>'id']]);
 // Route::get('/posts', [PostController::class, 'index']) -> name('posts.index');
 // Route::get('/posts/create', [PostController::class, 'create']) -> name('posts.create');

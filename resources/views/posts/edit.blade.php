@@ -5,21 +5,23 @@
 @section('content')
 <form method="post" action="{{route('posts.update', $post['id'])}}">
     @csrf
-    @method('PUT');
+    @method('PUT')
     <div class="mb-3">
         <label class="form-label">Title</label>
-        <input type="text" class="form-control">
+        <input type="text" value="{{ $post->title }}" name="title" class="form-control">
     </div>
     <div class="mb-3">
         <label class="form-label">Description</label>
-        <textarea class="form-control" rows="3"></textarea>
+        <textarea class="form-control"   name="description" rows="3">{{ $post->description }}</textarea>
     </div>
 
     <div class="mb-3">
-        <label class="form-label">Post Creator</label>
-        <select class="form-control">
-            <option value="1">Ahmed</option>
-            <option value="2">Mohamed</option>
+        <label class="form-label" name="post_creator">Post Creator</label>
+        <select class="form-control" name="post_creator">
+
+            @foreach ( $users as $user )
+            <option @if($user->id == $post->user_id) selected @endif value="{{ $user->id }}">{{ $user->name }}</option>
+            @endforeach
         </select>
     </div>
 
